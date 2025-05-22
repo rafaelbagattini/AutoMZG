@@ -47,5 +47,5 @@ sudo ./automzg.sh
 → Sinta-se livre para enviar críticas, dúvidas ou sugerir melhorias!<br/>
 → Este projeto é open source e feito para a comunidade.<br/>
 <br/>
-🪲 Desenvolvido por <b>BUG IT</b><br/>
+🪲 Desenvolvido por <b>BUG IT</b><br/><br/>
 🧑‍💻 Profissionais apaixonados por automação, monitoramento e infraestrutura inteligente.
