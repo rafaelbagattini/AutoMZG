@@ -42,7 +42,6 @@ sudo ./automzg.sh
 → Exibição colorida e em tempo real com status de sucesso ou falha.<br/>
 → Tudo instalado com apenas 1 script e sem setup.
 <br/><br/><br/>
-
 🤝 <b>Contribuições</b>
 
 → Sinta-se livre para enviar críticas, dúvidas ou sugerir melhorias!<br/>
