@@ -26,31 +26,46 @@ if [[ "$EUID" -ne 0 ]]; then
   exit 1
 fi
 
+# Verifica distribuição e versão do Ubuntu
+OS_NAME=$(grep '^NAME=' /etc/os-release | cut -d '=' -f2 | tr -d '"')
+OS_VERSION=$(grep '^VERSION_ID=' /etc/os-release | cut -d '=' -f2 | tr -d '"')
+OS_MAIOR=$(echo "$OS_VERSION" | cut -d '.' -f1)
+OS_MENOR=$(echo "$OS_VERSION" | cut -d '.' -f2)
+VERSION_NUM=$(echo "$OS_MAIOR.$OS_MENOR" | bc 2>/dev/null)
+
+if [[ "$OS_NAME" != "Ubuntu" ]]; then
+    echo -e "\n${VERMELHO}❌ Versão do script não é suportada com a Distribuição: ${ROXO_CLARO}${OS_NAME} ${OS_VERSION}${NC}"
+	echo -e "\n${BRANCO}✅ Versão do script suportada apenas para Distribuições: ${AMARELO}Debian ${BRANCO}| ${AMARELO}Ubuntu${NC}\n"
+
+    exit 1
+fi
+
+if (( $(echo "$VERSION_NUM <= 20.04" | bc -l) )); then
+    echo -e "\n${VERMELHO}❌ Versão do Ubuntu não suportada oficialmente pelo Zabbix 7.2. Use ${AMARELO}22.04 ${VERMELHO}ou ${AMARELO}superior ${VERMELHO}(ex: ${AMARELO}22.04 ${VERMELHO}, ${AMARELO}24.04${VERMELHO})${NC}\n"
+    exit 1
+fi
+
 clear
 
 # Banner ASCII
 echo -e "${VERMELHO}"
 cat << "EOF"
- ######     ##     #####    #####     ####    ##  ##             ####    ######    ####    #####    ##   ##
-     ##    ####    ##  ##   ##  ##     ##     ##  ##            ##  ##     ##     ##  ##   ##  ##   ### ###
-    ##    ##  ##   ##  ##   ##  ##     ##       ###             ##         ##     ##  ##   ##  ##   #######
-   ##     ######   #####    #####      ##       ##               ####      ##     ##  ##   #####    ## # ##
-  ##      ##  ##   ##  ##   ##  ##     ##      ####                 ##     ##     ##  ##   ####     ##   ##
- ##       ##  ##   ##  ##   ##  ##     ##     ##  ##            ##  ##     ##     ##  ##   ## ##    ##   ##
- ######   ##  ##   #####    #####     ####    ##  ##             ####      ##      ####    ##  ##   ##   ##
+		 █████╗ ██╗   ██╗████████╗ ██████╗     ███╗   ███╗███████╗ ██████╗ 
+		██╔══██╗██║   ██║╚══██╔══╝██╔═══██╗    ████╗ ████║╚══███╔╝██╔════╝ 
+		███████║██║   ██║   ██║   ██║   ██║    ██╔████╔██║  ███╔╝ ██║  ███╗
+		██╔══██║██║   ██║   ██║   ██║   ██║    ██║╚██╔╝██║ ███╔╝  ██║   ██║
+		██║  ██║╚██████╔╝   ██║   ╚██████╔╝    ██║ ╚═╝ ██║███████╗╚██████╔╝
+		╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝     ╚═╝     ╚═╝╚══════╝ ╚═════╝ 
 EOF
 echo
 echo
 
-echo -e "${BRANCO}:: Iniciando instalação do ${LARANJA}MySQL ${BRANCO}+ ${LARANJA}Zabbix ${BRANCO}+ ${LARANJA}Grafana ${BRANCO}:: "
-echo -e "${BRANCO}:: Aguarde..."
+echo -e "${BRANCO}:: Iniciando instalação do ${LARANJA}MySQL ${BRANCO}+ ${LARANJA}Zabbix ${BRANCO}+ ${LARANJA}Grafana ${BRANCO}::"
+echo -e "${BRANCO}:: ${AZUL_CLARO}Aguarde${BRANCO}..."
 echo
 echo
 
 # Detecta SO e versão
-OS_NAME=$(grep '^NAME=' /etc/os-release | cut -d '=' -f2 | tr -d '"')
-OS_VERSION=$(grep '^VERSION_ID=' /etc/os-release | cut -d '=' -f2 | tr -d '"')
-
 echo -e "${BRANCO}💻 Detectando sistema operacional: ${ROXO_CLARO}${OS_NAME} ${OS_VERSION}"
 echo
 echo
@@ -125,7 +140,7 @@ locale-gen pt_BR.UTF-8 &>/dev/null
 status
 
 # Cria arquivo de configuração do frontend para pular setup
-echo -e "${BRANCO}⏳ Configurando frontend do Zabbix:${FIM}"
+echo -e "${BRANCO}⏳ Configurando frontend do Zabbix:"
 cat <<EOF > /etc/zabbix/web/zabbix.conf.php
 <?php
 \$DB['TYPE']     = 'MYSQL';
@@ -152,10 +167,6 @@ cat <<EOF > /etc/zabbix/web/zabbix.conf.php
 EOF
 status
 
-# Ajusta permissões do arquivo do frontend
-chown www-data:www-data /etc/zabbix/web/zabbix.conf.php
-chmod 640 /etc/zabbix/web/zabbix.conf.php
-
 # Instala Grafana
 echo -e "${BRANCO}📦 Instalando Grafana:"
 apt install -y apt-transport-https software-properties-common wget &>/dev/null
@@ -172,11 +183,12 @@ systemctl restart zabbix-server zabbix-agent apache2 grafana-server &>/dev/null
 systemctl enable zabbix-server zabbix-agent apache2 grafana-server &>/dev/null
 status
 
-# Mensagem final e URLs de acesso
+# Mensagem final
 echo -e "${VERDE}🎉 Instalação finalizada com sucesso!"
 echo
 echo
 
+# URLs de acessos
 IP=$(hostname -I | awk '{print $1}')
 echo -e "${AMARELO}🔗 Zabbix: ${BRANCO}http://${AZUL_CLARO}${IP}${BRANCO}/zabbix${BRANCO} (${AMARELO}login: ${AZUL_CLARO}Admin / zabbix${BRANCO})"
 echo -e "${AMARELO}🔗 Grafana: ${BRANCO}http://${AZUL_CLARO}${IP}${BRANCO}:3000${BRANCO} (${AMARELO}login: ${AZUL_CLARO}admin / admin${BRANCO})"
