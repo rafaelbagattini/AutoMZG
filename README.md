@@ -9,7 +9,7 @@
 
 
 
-<b>AUTO MZG</b> é um script interativo e automatizado que instala o <i>Mysql Server</i> + <i>Zabbix Server</i> + <i>Grafana</i> em sistemas Debian e Ubuntu de forma rápida, eficiente e visualmente amigável no terminal.
+<b>AUTO MZG</b> é um script interativo e automatizado que instala o <i>Mysql Server</i> + <i>Zabbix Server</i> + <i>Grafana</i> em sistemas Ubuntu de forma rápida, eficiente e visualmente amigável no terminal.
 
 Desenvolvido para profissionais de infraestrutura, DevOps, analistas NOC e entusiastas de monitoramento que desejam agilizar a montagem de laboratórios ou ambientes de produção com uma interface clara e colorida.
 <br/><br/><br/>
@@ -23,7 +23,6 @@ sudo ./automzg.sh
 <br/><br/>
 🔧 <b>Requisitos</b>
 
-→ Debian 11 ou superior.<br/>
 → Ubuntu 22.04 ou superior.<br/>
 → Permissões de root (sudo).<br/>
 → Conexão com a internet.
