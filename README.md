@@ -56,6 +56,7 @@ sudo ./automzg.sh
 * Adição da cor AZUL ao script.
 * Repositório do Zabbix agora traz sempre a última versão do release 7.4.
 * Instala o Agent2 ao invés do Agent.
+* Armazena as senhas do ROOT e do MySQL no arquivo "creds" ao invés de exibir, com permissão de leitura-escrita apenas para o root (chmod 600).
 * Opção de selecionar o idioma do Frontend.
 * Configura o Timezone do Frontend com o mesmo Timezone do Ubuntu (fixado no php.ini).
 * Instala o plugin do Zabbix no Grafana.
