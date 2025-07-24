@@ -36,8 +36,7 @@ sudo ./automzg.sh
 → Instalação do Grafana.<br/>
 → Criação do banco de dados Zabbix com permissões.<br/>
 → Configuração do arquivo zabbix_server.conf.<br/>
-→ Opção de selecionar entre Português BR e Inglês EUA. (novo) <br/>
-→ Detecta o Fuso horário do servidor e configura na interface gráfica. (novo) <br/>
+→ Configuração de locale para pt_BR.UTF-8.<br/>
 → Ativação dos serviços.<br/>
 → Exibição colorida e em tempo real com status de sucesso ou falha.<br/>
 → Tudo instalado com apenas 1 script e sem setup.
@@ -56,8 +55,7 @@ sudo ./automzg.sh
 * Adição da cor AZUL ao script.
 * Repositório do Zabbix agora traz sempre a última versão do release 7.4.
 * Instala o Agent2 ao invés do Agent.
-* Armazena as senhas do ROOT e do MySQL no arquivo "creds" ao invés de exibir, com permissão de leitura-escrita apenas para o root (chmod 600).
-* Opção de selecionar o idioma do Frontend.
+* Armazena as senhas do ROOT e do MySQL no arquivo "creds" ao invés de exibir as senhas, com permissão de leitura-escrita apenas para o root (chmod 600).
+* Opção de selecionar o idioma do Frontend (pt_BR ou en_US).
 * Configura o Timezone do Frontend com o mesmo Timezone do Ubuntu (fixado no php.ini).
 * Instala o plugin do Zabbix no Grafana.
-
