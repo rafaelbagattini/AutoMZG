@@ -30,7 +30,7 @@ sudo ./automzg.sh
 ✅ <b>Recursos do Script</b>
 
 → Detecção de erros e ocultação de mensagens desnecessárias.<br/>
-→ Configuração automática do repositório Zabbix 7.4 (latest).<br/>
+→ Configuração automática do repositório Zabbix.<br/>
 → Instalação de pacotes Zabbix Server, Frontend e <b>Agent2</b>.<br/>
 → Instalação do MySQL Server.<br/>
 → Instalação do Grafana.<br/>
@@ -49,3 +49,14 @@ sudo ./automzg.sh
 <br/><br/>
 🧑‍💻 Profissionais apaixonados por automação, monitoramento e infraestrutura inteligente.<br/><br/>
 🪲 Desenvolvido por <b>BUG IT</b> e adaptado por <b>Rafael Bagattini</b>
+<br/><br/>
+
+📰 <b>Adaptações:</b>
+
+* Adição da cor AZUL ao script.
+* Repositório do Zabbix agora traz sempre a última versão do release 7.4.
+* Instala o Agent2 ao invés do Agent.
+* Opção de selecionar o idioma do Frontend.
+* Configura o Timezone do Frontend com o mesmo Timezone do Ubuntu (fixado no php.ini).
+* Instala o plugin do Zabbix no Grafana.
+
