@@ -6,6 +6,7 @@ VERMELHO="\e[31m"
 VERDE="\e[32m"
 VERDE_LIMAO="\e[92m"
 AZUL_CLARO="\e[96m"
+AZUL="\033[0;34m"
 ROXO_CLARO="\e[95m"
 LARANJA="\e[93m" 
 BRANCO="\e[97m"
@@ -41,7 +42,7 @@ if [[ "$OS_NAME" != "Ubuntu" ]]; then
 fi
 
 if (( $(echo "$VERSION_NUM <= 20.04" | bc -l) )); then
-    echo -e "\n${VERMELHO}❌ Versão do Ubuntu não suportada oficialmente pelo Zabbix 7.2. Use ${AMARELO}22.04 ${VERMELHO}ou ${AMARELO}superior ${VERMELHO}(ex: ${AMARELO}22.04 ${VERMELHO}, ${AMARELO}24.04${VERMELHO})${NC}\n"
+    echo -e "\n${VERMELHO}❌ Versão do Ubuntu não suportada oficialmente pelo Zabbix 7.4. Use ${AMARELO}22.04 ${VERMELHO}ou ${AMARELO}superior ${VERMELHO}(ex: ${AMARELO}22.04 ${VERMELHO}, ${AMARELO}24.04${VERMELHO})${NC}\n"
     exit 1
 fi
 
@@ -72,18 +73,19 @@ echo
 
 # Baixa repositório Zabbix
 echo -e "${BRANCO}📥 Baixando repositório do Zabbix para versão do Ubuntu ${ROXO_CLARO}${OS_VERSION}${BRANCO}:"
-wget -q https://repo.zabbix.com/zabbix/7.2/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_7.2-1+ubuntu${OS_VERSION}_all.deb
+wget -q https://repo.zabbix.com/zabbix/7.4/release/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.4+ubuntu${OS_VERSION}_all.deb
 status
 
 # Instala o pacote .deb do repositório e atualiza
 echo -e "${BRANCO}⏳ Atualizando repositório do Zabbix:"
-dpkg -i zabbix-release_7.2-1+ubuntu${OS_VERSION}_all.deb &>/dev/null
+dpkg -i zabbix-release_latest_7.4+ubuntu${OS_VERSION}_all.deb &>/dev/null
+rm zabbix-release_latest_7.4+ubuntu${OS_VERSION}_all.deb
 apt update -qq &>/dev/null
 status
 
 # Instala componentes do Zabbix
 echo -e "${BRANCO}📦 Instalando pacotes Zabbix:"
-apt install -y zabbix-server-mysql zabbix-frontend-php zabbix-apache-conf zabbix-sql-scripts zabbix-agent &>/dev/null
+apt install -y zabbix-server-mysql zabbix-frontend-php zabbix-apache-conf zabbix-sql-scripts zabbix-agent2 &>/dev/null
 status
 
 # Instala MySQL Server
@@ -94,14 +96,18 @@ status
 # Solicita senha root do MySQL
 read -sp "$(echo -e "${BRANCO}🔑 Digite uma senha para o usuário ${ROXO_CLARO}ROOT ${BRANCO}do MySQL: ")" MYSQL_ROOT_PASS
 echo
-echo -e "${VERDE}✅ Senha digitada: ${AZUL_CLARO}${MYSQL_ROOT_PASS}"
+touch creds
+echo "Senha root MySQL: ${MYSQL_ROOT_PASS}" >> creds
 echo
 
 # Solicita senha do usuário Zabbix
 read -sp "$(echo -e "${BRANCO}🔑 Digite uma senha para o usuário do banco Zabbix: ")" DB_PASS
 echo
-echo -e "${VERDE}✅ Senha digitada: ${AZUL_CLARO}${DB_PASS}"
+echo "DBPASS: ${DB_PASS}" >> creds
+chmod 600 creds
 echo
+echo "🔐 As senhas foram armazenadas no arquivo creds"
+status
 
 # Cria base de dados e altera autenticação do root
 echo -e "${BRANCO}📦 Criando banco de dados Zabbix:"
@@ -126,17 +132,38 @@ echo -e "${BRANCO}🔄 Importando banco de dados do Zabbix:"
 zcat /usr/share/zabbix/sql-scripts/mysql/server.sql.gz | mysql --default-character-set=utf8mb4 -u zabbix -p"${DB_PASS}" zabbix &>/dev/null
 status
 
-# Restaura config de binlogs e define idioma no banco
-mysql -u root -p"${MYSQL_ROOT_PASS}" -e "SET GLOBAL log_bin_trust_function_creators = 0; USE zabbix; UPDATE users SET lang = 'pt_BR' WHERE lang != 'pt_BR';" &>/dev/null
+# Restaura config de binlogs
+mysql -u root -p"${MYSQL_ROOT_PASS}" -e "SET GLOBAL log_bin_trust_function_creators = 0;" &>/dev/null
 
 # Ajusta password no config do Zabbix Server
 echo -e "${BRANCO}⏳ Configurando arquivo ${ROXO_CLARO}ZABBIX.CONF${BRANCO}:"
 sed -i "s/# DBPassword=/DBPassword=${DB_PASS}/" /etc/zabbix/zabbix_server.conf &>/dev/null
 status
 
-# Gera locale pt-br
-echo -e "${BRANCO}⏳ Configurando idioma ${ROXO_CLARO}PT-BR${BRANCO}:"
-locale-gen pt_BR.UTF-8 &>/dev/null
+while true; do
+	echo -e "${BRANCO}1 - Português (${VERDE}B${AMARELO}R${BRANCO})"
+	echo -e "${BRANCO}2 - Inglês (${AZUL}E${BRANCO}U${VERMELHO}A${BRANCO})"
+	echo
+	read -p "🗺️ Selecione o idioma da interface gráfica: " IDIOMA
+
+	case "$IDIOMA" in
+		1) 
+		echo -e "Idioma selecionado: Português (${VERDE}B${AMARELO}R${BRANCO})"
+		locale-gen pt_BR.UTF-8 &>/dev/null
+		mysql -u root -p"${MYSQL_ROOT_PASS}" -e "SET GLOBAL log_bin_trust_function_creators = 0; USE zabbix; UPDATE users SET lang = 'pt_BR' WHERE lang != 'pt_BR';" &>/dev/null
+		break
+		;;
+		2)
+		echo -e "Idioma selecionado: Inglês (${AZUL}E${BRANCO}U${VERMELHO}A${BRANCO})"
+		locale-gen en_US.UTF-8 &>/dev/null
+		break
+		;;
+		*)
+		echo "Opção inválida. Selecione novamente."
+		;;
+	esac
+	status
+done
 status
 
 # Cria arquivo de configuração do frontend para pular setup
@@ -165,6 +192,16 @@ cat <<EOF > /etc/zabbix/web/zabbix.conf.php
 
 \$IMAGE_FORMAT_DEFAULT = IMAGE_FORMAT_PNG;
 EOF
+
+# Verifica qual o fuso horário
+FUSO_HORARIO=$(timedatectl | grep 'Time zone:' | awk '{print $3}')
+
+# Alterando o fuso horário padrão da interface web
+sed -i "s|^;date.timezone =.*|date.timezone = $(printf '%q' "$FUSO_HORARIO")|" /etc/php/8.3/apache2/php.ini
+
+# Reiniciando o Apache
+systemctl restart apache2
+
 status
 
 # Instala Grafana
@@ -177,10 +214,16 @@ apt update -qq &>/dev/null
 apt install -y grafana &>/dev/null
 status
 
+# Instala o plugin do Zabbix
+echo -e "${BRANCO}📦 Instalando Plugin do Zabbix no Grafana:"
+grafana-cli plugins install alexanderzobnin-zabbix-app &>/dev/null
+systemctl restart grafana-server
+status
+
 # Reinicia e habilita serviços
 echo -e "${BRANCO}🔁 Ativando e iniciando serviços:"
-systemctl restart zabbix-server zabbix-agent apache2 grafana-server &>/dev/null
-systemctl enable zabbix-server zabbix-agent apache2 grafana-server &>/dev/null
+systemctl restart zabbix-server zabbix-agent2 apache2 grafana-server &>/dev/null
+systemctl enable zabbix-server zabbix-agent2 apache2 grafana-server &>/dev/null
 status
 
 # Mensagem final
@@ -193,5 +236,5 @@ IP=$(hostname -I | awk '{print $1}')
 echo -e "${AMARELO}🔗 Zabbix: ${BRANCO}http://${AZUL_CLARO}${IP}${BRANCO}/zabbix${BRANCO} (${AMARELO}login: ${AZUL_CLARO}Admin / zabbix${BRANCO})"
 echo -e "${AMARELO}🔗 Grafana: ${BRANCO}http://${AZUL_CLARO}${IP}${BRANCO}:3000${BRANCO} (${AMARELO}login: ${AZUL_CLARO}admin / admin${BRANCO})"
 echo
-echo -e "${BRANCO}Script desenvolvido por: ${VERDE_LIMAO}BUG IT${NC}"
+echo -e "${BRANCO}Script desenvolvido por: ${VERDE_LIMAO}BUG IT${BRANCO} e adaptado por ${AZUL}Rafael Bagattini${NC}"
 echo
