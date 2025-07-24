@@ -30,14 +30,14 @@ sudo ./automzg.sh
 ✅ <b>Recursos do Script</b>
 
 → Detecção de erros e ocultação de mensagens desnecessárias.<br/>
-* → Configuração automática do repositório Zabbix 7.4.<br/>
-* → Instalação de pacotes Zabbix Server, Frontend e Agent2.<br/>
+→ Configuração automática do repositório Zabbix 7.4 (latest).<br/>
+→ Instalação de pacotes Zabbix Server, Frontend e <b>Agent2</b>.<br/>
 → Instalação do MySQL Server.<br/>
 → Instalação do Grafana.<br/>
 → Criação do banco de dados Zabbix com permissões.<br/>
 → Configuração do arquivo zabbix_server.conf.<br/>
-* → Opção de selecionar entre Português BR e Inglês EUA.<br/>
-* → Detecta o Fuso horário do servidor e configura na interface gráfica.
+→ Opção de selecionar entre Português BR e Inglês EUA. (novo) <br/>
+→ Detecta o Fuso horário do servidor e configura na interface gráfica. (novo) <br/>
 → Ativação dos serviços.<br/>
 → Exibição colorida e em tempo real com status de sucesso ou falha.<br/>
 → Tudo instalado com apenas 1 script e sem setup.
