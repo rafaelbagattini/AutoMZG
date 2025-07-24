@@ -15,7 +15,7 @@ Desenvolvido para profissionais de infraestrutura, DevOps, analistas NOC e entus
 <br/><br/><br/>
 📂 <b>Como Utilizar</b>
 ```bash
-git clone https://github.com/bug-it/automzg.git
+git clone https://github.com/rafaelbagattini/automzg.git
 cd automzg
 chmod +x automzg.sh
 sudo ./automzg.sh
@@ -30,13 +30,14 @@ sudo ./automzg.sh
 ✅ <b>Recursos do Script</b>
 
 → Detecção de erros e ocultação de mensagens desnecessárias.<br/>
-→ Configuração automática do repositório Zabbix.<br/>
-→ Instalação de pacotes Zabbix Server, Frontend e Agent.<br/>
+* → Configuração automática do repositório Zabbix 7.4.<br/>
+* → Instalação de pacotes Zabbix Server, Frontend e Agent2.<br/>
 → Instalação do MySQL Server.<br/>
 → Instalação do Grafana.<br/>
 → Criação do banco de dados Zabbix com permissões.<br/>
 → Configuração do arquivo zabbix_server.conf.<br/>
-→ Configuração de locale para pt_BR.UTF-8<br/>
+* → Opção de selecionar entre Português BR e Inglês EUA.<br/>
+* → Detecta o Fuso horário do servidor e configura na interface gráfica.
 → Ativação dos serviços.<br/>
 → Exibição colorida e em tempo real com status de sucesso ou falha.<br/>
 → Tudo instalado com apenas 1 script e sem setup.
@@ -47,4 +48,4 @@ sudo ./automzg.sh
 → Este projeto é open source e feito para a comunidade.<br/>
 <br/><br/>
 🧑‍💻 Profissionais apaixonados por automação, monitoramento e infraestrutura inteligente.<br/><br/>
-🪲 Desenvolvido por <b>BUG IT</b>
+🪲 Desenvolvido por <b>BUG IT</b> e adaptado por <b>Rafael Bagattini</b>
