@@ -216,7 +216,7 @@ status
 
 # Instala o plugin do Zabbix
 echo -e "${BRANCO}📦 Instalando Plugin do Zabbix no Grafana:"
-grafana-cli plugins install alexanderzobnin-zabbix-app &>/dev/null
+sudo -u grafana grafana-cli plugins install alexanderzobnin-zabbix-app &>/dev/null
 systemctl restart grafana-server
 status
 
