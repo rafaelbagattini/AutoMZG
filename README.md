@@ -59,3 +59,10 @@ sudo ./automzg.sh
 * Opção de selecionar o idioma do Frontend (pt_BR ou en_US).
 * Configura o Timezone do Frontend com o mesmo Timezone do Ubuntu (fixado no php.ini).
 * Instala o plugin do Zabbix no Grafana.
+<br/><br/>
+
+📰 <b>Notes do Proxmox</b>
+
+  Se você usa o Proxmox, considere a sugestão do arquivo <b>notes</b><br><br>
+  <img width="360" height="336" alt="image" src="https://github.com/user-attachments/assets/9bc13d18-d5e1-4cee-8238-188700237ce0" />
+
